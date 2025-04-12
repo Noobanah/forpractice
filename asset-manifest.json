@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/forpractice/static/css/main.f855e6bc.css",
-    "main.js": "/forpractice/static/js/main.b10656f8.js",
+    "main.js": "/forpractice/static/js/main.aea4547a.js",
     "static/js/453.3cdc8334.chunk.js": "/forpractice/static/js/453.3cdc8334.chunk.js",
     "index.html": "/forpractice/index.html",
     "main.f855e6bc.css.map": "/forpractice/static/css/main.f855e6bc.css.map",
-    "main.b10656f8.js.map": "/forpractice/static/js/main.b10656f8.js.map",
+    "main.aea4547a.js.map": "/forpractice/static/js/main.aea4547a.js.map",
     "453.3cdc8334.chunk.js.map": "/forpractice/static/js/453.3cdc8334.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f855e6bc.css",
-    "static/js/main.b10656f8.js"
+    "static/js/main.aea4547a.js"
   ]
 }
