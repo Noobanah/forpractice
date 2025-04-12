@@ -103,7 +103,7 @@ function App() {
           }, {})
         ).map(([category, users]) => (
           <li key={category}>
-            <h3>📂 Category: {category}</h3>
+            <h3>Category: {category}</h3>
             <ul>
               {users.map((user) => (
                 <li key={user.id}>{user.first_name}</li>
