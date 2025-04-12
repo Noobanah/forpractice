@@ -31,17 +31,27 @@ function formReducer(state, action) {
 function App() {
   const [state, dispatch] = useReducer(formReducer, []);
   const [edit, setEdit] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const userData = await fetchUser();
-        dispatch({
-          type: "SET_USER",
-          payload: userData.data,
-        });
+        if (userData && userData.data) {
+          dispatch({
+            type: "SET_USER",
+            payload: userData.data,
+          });
+        } else {
+          setError("ข้อมูลผู้ใช้ไม่ถูกต้อง");
+        }
       } catch (error) {
-        console.error("error");
+        console.error("เกิดข้อผิดพลาด:", error);
+        setError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -52,47 +62,76 @@ function App() {
     setEdit(id);
   }
 
-  function handleAdd(updatedUser) {
-    dispatch({ type: "EDIT_CATEGORY", payload: updatedUser });
-    setEdit(null);
+  function handleAdd(e, eachUser) {
+    if (e.key === "Enter") {
+      const updatedUser = {
+        id: eachUser.id,
+        category: e.target.value,
+      };
+      dispatch({ type: "EDIT_CATEGORY", payload: updatedUser });
+      setEdit(null);
+    }
   }
 
-  return (
-    <div>
-      <p>ฝึก push pull ที่นี่</p>
-      <ul>
-        {state.map((eachUser) => (
-          <li key={eachUser.id}>
-            <p>{eachUser.first_name}</p>
-            {edit === eachUser.id ? (
-              <input
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    const updatedUser = {
-                      ...eachUser,
-                      category: e.target.value,
-                    };
-                    console.log(updatedUser);
-                    handleAdd(updatedUser);
-                  }
-                }}
-              />
-            ) : (
-              <p onClick={() => handleEdit(eachUser.id)}>{eachUser.category}</p>
-            )}
-            <img src={eachUser.avatar} alt="profile" />
+  if (loading) return <div className="loading">กำลังโหลดข้อมูล...</div>;
+  if (error) return <div className="error">เกิดข้อผิดพลาด: {error}</div>;
+  if (state.length === 0)
+    return <div className="no-data">ไม่พบข้อมูลผู้ใช้</div>;
 
-            <button
-              onClick={() =>
-                dispatch({ type: "TOGGLE_LIKE", payload: { id: eachUser.id } })
-              }
-            >
-              {eachUser.like ? "like" : "unlike"}
-            </button>
+  return (
+    <div className="container">
+      <h1>ระบบจัดการผู้ใช้</h1>
+      <h2>รายชื่อผู้ใช้</h2>
+      <ul className="user-list">
+        {state.map((eachUser) => (
+          <li key={eachUser.id} className="user-item">
+            <div className="user-header">
+              <img
+                src={eachUser.avatar}
+                alt={`${eachUser.first_name} profile`}
+                className="user-avatar"
+              />
+              <div className="user-info">
+                <h3>
+                  {eachUser.first_name} {eachUser.last_name}
+                </h3>
+                <div className="user-category">
+                  <span>หมวดหมู่: </span>
+                  {edit === eachUser.id ? (
+                    <input
+                      defaultValue={eachUser.category}
+                      onKeyDown={(e) => handleAdd(e, eachUser)}
+                      autoFocus
+                      className="category-input"
+                    />
+                  ) : (
+                    <span
+                      onClick={() => handleEdit(eachUser.id)}
+                      className="category-text"
+                    >
+                      {eachUser.category}
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={() =>
+                    dispatch({
+                      type: "TOGGLE_LIKE",
+                      payload: { id: eachUser.id },
+                    })
+                  }
+                  className={`like-button ${eachUser.like ? "liked" : ""}`}
+                >
+                  {eachUser.like ? "ถูกใจแล้ว" : "ถูกใจ"}
+                </button>
+              </div>
+            </div>
           </li>
         ))}
       </ul>
-      <ul>
+
+      <h2>จัดกลุ่มตามหมวดหมู่</h2>
+      <ul className="category-list">
         {Object.entries(
           state.reduce((acc, user) => {
             if (!acc[user.category]) {
@@ -102,11 +141,21 @@ function App() {
             return acc;
           }, {})
         ).map(([category, users]) => (
-          <li key={category}>
-            <h3>Category: {category}</h3>
-            <ul>
+          <li key={category} className="category-item">
+            <h3>หมวดหมู่: {category}</h3>
+            <ul className="category-users">
               {users.map((user) => (
-                <li key={user.id}>{user.first_name}</li>
+                <li key={user.id} className="category-user">
+                  <img
+                    src={user.avatar}
+                    alt={`${user.first_name} thumbnail`}
+                    className="user-thumbnail"
+                  />
+                  <span>
+                    {user.first_name} {user.last_name}
+                  </span>
+                  {user.like && <span className="liked-indicator">♥</span>}
+                </li>
               ))}
             </ul>
           </li>
