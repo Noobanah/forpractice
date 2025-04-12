@@ -1,6 +1,23 @@
 import "./App.css";
+import { fetchUser } from "./components/data";
+import { useState, useEffect } from "react";
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userData = await fetchUser();
+        setUser(userData);
+      } catch (error) {
+        console.error("error");
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div>
       <h1>React ใช้ .jsx ได้! 🚀</h1>
