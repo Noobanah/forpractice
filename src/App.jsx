@@ -92,7 +92,26 @@ function App() {
           </li>
         ))}
       </ul>
-      //แสดงผลแยก category อาจจะต้องใช้ reduce
+      <ul>
+        {Object.entries(
+          state.reduce((acc, user) => {
+            if (!acc[user.category]) {
+              acc[user.category] = [];
+            }
+            acc[user.category].push(user);
+            return acc;
+          }, {})
+        ).map(([category, users]) => (
+          <li key={category}>
+            <h3>📂 Category: {category}</h3>
+            <ul>
+              {users.map((user) => (
+                <li key={user.id}>{user.first_name}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
