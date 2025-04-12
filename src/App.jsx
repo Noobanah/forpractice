@@ -3,7 +3,7 @@ import { fetchUser } from "./components/data";
 import { useState, useEffect } from "react";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
