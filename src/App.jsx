@@ -17,6 +17,7 @@ function App() {
         const userWithCategory = userData.data.map((u) => ({
           ...u,
           category: "default",
+          like: false,
         }));
         setUser(userWithCategory);
       } catch (error) {
@@ -36,6 +37,7 @@ function App() {
             <p>{eachUser.first_name}</p>
             <img src={eachUser.avatar} alt="profile picture" />
             <p>{eachUser.category}</p>
+            <p>{eachUser.like ? "like" : "unlike"}</p>
             {/* //ปุ่มเพิ่ม category //เงื่อนไข แสดงเพิ่ม category โดยดูจาก id
             //แสดง category เดิม //input ให้เพิ่มใหม่ */}
           </li>
