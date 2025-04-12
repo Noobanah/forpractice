@@ -1,25 +1,45 @@
 import "./App.css";
 import { fetchUser } from "./components/data";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 
-//reducer function มีหลาย action
-//เพิ่ม category
-//แก้ category
-//like, unlike
+function formReducer(state, action) {
+  switch (action.type) {
+    case "SET_USER":
+      return action.payload.map((u) => ({
+        ...u,
+        category: "default",
+        like: false,
+      }));
+
+    case "EDIT_CATEGORY":
+      return state.map((u) =>
+        u.id === action.payload.id
+          ? { ...u, category: action.payload.category }
+          : u
+      );
+
+    case "TOGGLE_LIKE":
+      return state.map((u) =>
+        u.id === action.payload.id ? { ...u, like: !u.like } : u
+      );
+
+    default:
+      return state;
+  }
+}
 
 function App() {
-  const [user, setUser] = useState([]);
+  const [state, dispatch] = useReducer(formReducer, []);
+  const [edit, setEdit] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userData = await fetchUser();
-        const userWithCategory = userData.data.map((u) => ({
-          ...u,
-          category: "default",
-          like: false,
-        }));
-        setUser(userWithCategory);
+        dispatch({
+          type: "SET_USER",
+          payload: userData.data,
+        });
       } catch (error) {
         console.error("error");
       }
@@ -28,18 +48,47 @@ function App() {
     fetchData();
   }, []);
 
+  function handleEdit(id) {
+    setEdit(id);
+  }
+
+  function handleAdd(updatedUser) {
+    dispatch({ type: "EDIT_CATEGORY", payload: updatedUser });
+    setEdit(null);
+  }
+
   return (
     <div>
       <p>ฝึก push pull ที่นี่</p>
       <ul>
-        {user.map((eachUser) => (
+        {state.map((eachUser) => (
           <li key={eachUser.id}>
             <p>{eachUser.first_name}</p>
-            <img src={eachUser.avatar} alt="profile picture" />
-            <p>{eachUser.category}</p>
-            <p>{eachUser.like ? "like" : "unlike"}</p>
-            {/* //ปุ่มเพิ่ม category //เงื่อนไข แสดงเพิ่ม category โดยดูจาก id
-            //แสดง category เดิม //input ให้เพิ่มใหม่ */}
+            {edit === eachUser.id ? (
+              <input
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const updatedUser = {
+                      ...eachUser,
+                      category: e.target.value,
+                    };
+                    console.log(updatedUser);
+                    handleAdd(updatedUser);
+                  }
+                }}
+              />
+            ) : (
+              <p onClick={() => handleEdit(eachUser.id)}>{eachUser.category}</p>
+            )}
+            <img src={eachUser.avatar} alt="profile" />
+
+            <button
+              onClick={() =>
+                dispatch({ type: "TOGGLE_LIKE", payload: { id: eachUser.id } })
+              }
+            >
+              {eachUser.like ? "like" : "unlike"}
+            </button>
           </li>
         ))}
       </ul>
