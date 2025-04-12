@@ -24,6 +24,11 @@ function App() {
       <h1>React ใช้ .jsx ได้! 🚀</h1>
       <p>ลองเปลี่ยน App.js เป็น App.jsx แล้ว!</p>
       <p>ฝึก push pull ที่นี่</p>
+      <ul>
+        {user.map((eachUser) => (
+          <li key={eachUser.id}>{eachUser.first_name}</li>
+        ))}
+      </ul>
     </div>
   );
 }
