@@ -9,8 +9,8 @@ function App() {
     const fetchData = async () => {
       try {
         const userData = await fetchUser();
-        setUser(userData);
-        console.log(userData);
+        setUser(userData.data);
+        console.log(userData.data);
       } catch (error) {
         console.error("error");
       }
