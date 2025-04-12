@@ -10,6 +10,7 @@ function App() {
       try {
         const userData = await fetchUser();
         setUser(userData);
+        console.log(userData);
       } catch (error) {
         console.error("error");
       }
