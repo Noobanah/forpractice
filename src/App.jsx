@@ -26,7 +26,10 @@ function App() {
       <p>ฝึก push pull ที่นี่</p>
       <ul>
         {user.map((eachUser) => (
-          <li key={eachUser.id}>{eachUser.first_name}</li>
+          <li key={eachUser.id}>
+            <p>{eachUser.first_name}</p>
+            <img src={eachUser.avatar} alt="profile picture"/>
+          </li>
         ))}
       </ul>
     </div>
